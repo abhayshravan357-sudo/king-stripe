@@ -19,6 +19,8 @@
   const money = value => `₹${value.toLocaleString('en-IN')}`;
   const $ = (query, root = document) => root.querySelector(query);
   const $$ = (query, root = document) => [...root.querySelectorAll(query)];
+  const asset = path => `${document.body.dataset.assetPrefix || ''}${path}`;
+  const collectionBase = document.body.hasAttribute('data-collection-base') ? document.body.dataset.collectionBase : 'collections/';
   const productById = id => products.find(product => product.id === Number(id));
   let bag = safeRead('ks-redesign-bag', []);
   let saved = safeRead('ks-redesign-saved', []);
@@ -28,6 +30,17 @@
   let selectedSize = '';
   const cardColours = {};
   let toastTimer;
+  const revealObserver = 'IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ? new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); }
+    }), { threshold: 0.12 })
+    : null;
+  function watchReveals(root = document) {
+    const elements = $$('[data-reveal]', root);
+    if (!revealObserver) { elements.forEach(element => element.classList.add('is-visible')); return; }
+    if (elements.length) document.documentElement.classList.add('motion-enabled');
+    elements.forEach(element => revealObserver.observe(element));
+  }
 
   function safeRead(key, fallback) {
     try { return JSON.parse(localStorage.getItem(key) || 'null') || fallback; } catch { return fallback; }
@@ -55,23 +68,26 @@
     return `<svg class="hoodie ${back ? 'back-view' : 'front-view'}" viewBox="0 0 240 250" role="img" aria-label="${back ? 'Back' : 'Front'} view of ${product.name} hoodie in ${colour}"><defs><linearGradient id="${key}-cloth" x1="0" y1="0" x2="1" y2=".9"><stop offset="0" stop-color="${fill}"/><stop offset=".48" stop-color="${fill}"/><stop offset="1" stop-color="#77756e" stop-opacity=".24"/></linearGradient><linearGradient id="${key}-pocket" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".14"/><stop offset="1" stop-color="#11110f" stop-opacity=".1"/></linearGradient></defs><ellipse cx="120" cy="239" rx="85" ry="5" fill="#11110f" opacity=".1"/>${hoodMarkup}<path d="${body}" fill="url(#${key}-cloth)" stroke="#11110f" stroke-width="2.8" stroke-linejoin="round"/><path d="M56 57L21 130 47 143 65 109M184 57l36 73-27 13-18-34" fill="none" stroke="#fff" stroke-opacity=".27" stroke-width="1.6" stroke-linejoin="round"/><path d="M63 111L60 222M177 111l3 111" fill="none" stroke="#11110f" stroke-opacity=".3" stroke-width="1.4"/>${seams}${pocket.replaceAll('url(#pocket)', `url(#${key}-pocket)`)}${closure}<path d="M64 213Q120 222 176 213L179 232Q120 244 61 232Z" fill="#11110f" fill-opacity=".08" stroke="#11110f" stroke-width="1.5"/><path d="M67 218Q120 227 173 218M68 224Q120 233 172 224" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1"/><path d="M39 132l17 6v22q-13 5-23-4l-4-16ZM201 132l-17 6v22q13 5 23-4l4-16Z" fill="url(#${key}-cloth)" stroke="#11110f" stroke-width="2"/><path d="M35 145q10 6 20 2m-32-1 26 9m155-10q-10 6-20 2m32-1-26 9" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="1"/>${product.type === 'Oversized' ? '<path d="M78 56l-4 161m88-161 4 161" fill="none" stroke="#11110f" stroke-opacity=".11" stroke-width="2"/>' : ''}${back ? '<path d="M120 57v14" stroke="#11110f" stroke-opacity=".24" stroke-width="1.5"/>' : ''}</svg>`;
   }
   function renderCollections() {
-    $('#collection-grid').innerHTML = collections.map(collection => {
+    const grid = $('#collection-grid');
+    if (!grid) return;
+    grid.innerHTML = collections.map(collection => {
       const actual = collection.status === 'Available';
       const art = actual
-        ? `<img src="${collection.artwork}" alt="" aria-hidden="true">`
+        ? `<img src="${asset(collection.artwork)}" alt="" aria-hidden="true">`
         : `<span aria-hidden="true">${collection.animal.slice(0, 2).toUpperCase()}</span>`;
-      const inner = `<div class="collection-card-top"><span>${actual ? `COLLECTION ${collection.id}` : `SYSTEM EXAMPLE ${collection.id}`}</span><span>${actual ? 'AVAILABLE ↗' : 'NOT RELEASED'}</span></div><div class="collection-card-art">${art}</div><div class="collection-card-bottom"><div><small>${collection.animal.toUpperCase()} / ${collection.colour.toUpperCase()}${actual ? '' : ' · CONCEPT'}</small><strong>${collection.animal}<b>×</b>${collection.colour}</strong><span class="collection-tagline">${collection.tagline}</span></div><span aria-hidden="true">${actual ? '↗' : '·'}</span></div>`;
+      const inner = `<div class="collection-card-top"><span>${actual ? `COLLECTION ${collection.id}` : `SYSTEM EXAMPLE ${collection.id}`}</span><span>${actual ? 'AVAILABLE ↗' : 'PREVIEW ↗'}</span></div><div class="collection-card-art">${art}</div><div class="collection-card-bottom"><div><small>${collection.animal.toUpperCase()} / ${collection.colour.toUpperCase()}${actual ? '' : ' · CONCEPT'}</small><strong>${collection.animal}<b>×</b>${collection.colour}</strong><span class="collection-tagline">${collection.tagline}</span></div><span aria-hidden="true">↗</span></div>`;
       return actual
-        ? `<a class="collection-card" data-collection="${collection.id}" style="--collection:${collection.accent}" href="?collection=${collection.slug}#collection-page" aria-label="Explore Collection ${collection.id}: ${collection.title}">${inner}</a>`
-        : `<article class="collection-card is-concept" data-concept="${collection.animal.toLowerCase()}" style="--collection:${collection.accent}" aria-label="${collection.title}, concept example not released">${inner}</article>`;
+        ? `<a class="collection-card" data-reveal data-collection="${collection.id}" style="--collection:${collection.accent}" href="${collectionBase}${collection.slug}/index.html" aria-label="Explore Collection ${collection.id}: ${collection.title}">${inner}</a>`
+        : `<a class="collection-card is-concept" data-reveal data-concept="${collection.animal.toLowerCase()}" style="--collection:${collection.accent}" href="${collectionBase}${collection.slug}/index.html" aria-label="Explore the ${collection.animal} and ${collection.colour} collection concept">${inner}</a>`;
     }).join('');
+    watchReveals(grid);
   }
   function renderFeaturedCollection() {
     const featured = collections.find(collection => collection.featured && collection.status === 'Available');
-    if (!featured) return;
+    if (!featured || !$('[data-featured-label]')) return;
     $('[data-featured-label]').textContent = `FEATURED COLLECTION ${featured.id}`;
     $('[data-featured-number]').textContent = `${featured.id} / ${String(collections.length).padStart(2, '0')}`;
-    $('[data-featured-art]').src = featured.heroImage || featured.artwork;
+    $('[data-featured-art]').src = asset(featured.heroImage || featured.artwork);
     $('[data-featured-art]').alt = `${featured.animal} artwork for Collection ${featured.id}`;
     $('[data-featured-title]').innerHTML = `${featured.animal.toUpperCase()} <b>×</b> ${featured.colour.toUpperCase()}`;
     $('[data-featured-tagline]').textContent = featured.tagline.toUpperCase();
@@ -81,7 +97,7 @@
     const isSaved = saved.includes(product.id);
     const edition = String(products.findIndex(item => item.id === product.id) + 1).padStart(2, '0');
     const darkGarment = colour === 'Midnight';
-    return `<article class="product-card" data-product="${product.id}"><div class="product-visual"><span class="product-tag">COLLECTION 001 <i>— ${edition}</i></span><button class="product-wish" type="button" aria-label="${isSaved ? 'Remove from' : 'Add to'} saved pieces: ${product.name}" aria-pressed="${isSaved}" data-wish="${product.id}">${isSaved ? '♥' : '♡'}</button>${shirtSvg(product, colour)}<img class="garment-print front-print ${darkGarment ? 'print-light' : ''}" src="assets/tiger_scarred.svg" alt="" aria-hidden="true">${shirtSvg(product, colour, true)}<img class="garment-print back-print ${darkGarment ? 'print-light' : ''}" src="assets/tiger_scarred.svg" alt="" aria-hidden="true"><button class="product-view-label" type="button" data-flip aria-pressed="false" aria-label="Show back of ${product.name}">FRONT <span>↔</span> BACK</button></div><div class="product-meta"><div class="product-title-row"><h3>${product.name}</h3><span class="product-price">${money(product.price)}</span></div><p>${product.type} hoodie <span>·</span> Tiger × Black</p><div class="product-card-bottom"><div class="product-swatches" role="group" aria-label="Choose garment colour for ${product.name}">${product.colourways.map(c => `<button class="product-swatch ${c === colour ? 'selected' : ''}" type="button" data-card-colour="${c}" data-card-product="${product.id}" title="${c}" aria-label="Show ${c} ${product.name}" aria-pressed="${c === colour}" style="--swatch:${colourValues[c]};${c === 'Midnight' ? 'border-color:#bbb' : ''}"></button>`).join('')}</div><span class="swatch-name">${colour}</span><button class="quick-view-btn" type="button" data-open-product="${product.id}">View details <span>↗</span></button></div></div></article>`;
+    return `<article class="product-card" data-product="${product.id}" data-reveal><div class="product-visual"><span class="product-tag">COLLECTION ${product.collection} <i>— ${edition}</i></span><button class="product-wish" type="button" aria-label="${isSaved ? 'Remove from' : 'Add to'} saved pieces: ${product.name}" aria-pressed="${isSaved}" data-wish="${product.id}">${isSaved ? '♥' : '♡'}</button>${shirtSvg(product, colour)}<img class="garment-print front-print ${darkGarment ? 'print-light' : ''}" src="${asset('assets/tiger_scarred.svg')}" alt="" aria-hidden="true">${shirtSvg(product, colour, true)}<img class="garment-print back-print ${darkGarment ? 'print-light' : ''}" src="${asset('assets/tiger_scarred.svg')}" alt="" aria-hidden="true"><button class="product-view-label" type="button" data-flip aria-pressed="false" aria-label="Show back of ${product.name}">FRONT <span>↔</span> BACK</button></div><div class="product-meta"><div class="product-title-row"><h3>${product.name}</h3><span class="product-price">${money(product.price)}</span></div><p>${product.type} hoodie <span>·</span> ${collections.find(c => c.id === product.collection)?.title || 'King Stripe'}</p><div class="product-card-bottom"><div class="product-swatches" role="group" aria-label="Choose garment colour for ${product.name}">${product.colourways.map(c => `<button class="product-swatch ${c === colour ? 'selected' : ''}" type="button" data-card-colour="${c}" data-card-product="${product.id}" title="${c}" aria-label="Show ${c} ${product.name}" aria-pressed="${c === colour}" style="--swatch:${colourValues[c]};${c === 'Midnight' ? 'border-color:#bbb' : ''}"></button>`).join('')}</div><span class="swatch-name">${colour}</span><button class="quick-view-btn" type="button" data-open-product="${product.id}">View details <span>↗</span></button></div></div></article>`;
   }
   function renderProducts(target = '#product-grid', filter = selectedFilter) {
     const root = $(target);
@@ -98,6 +114,7 @@
       if (sort === 'high') shown.sort((a, b) => b.price - a.price);
     }
     root.innerHTML = shown.map(productCard).join('') || '<p class="empty-products">No products in this selection yet.</p>';
+    watchReveals(root);
   }
   function updateCounts() {
     $$('[data-bag-count]').forEach(el => el.textContent = bag.reduce((total, item) => total + item.quantity, 0));
@@ -137,9 +154,10 @@
   function renderBag() {
     const content = $('#bag-content');
     const footer = $('#bag-footer');
+    if (!content || !footer) return;
     if (!bag.length) {
       content.innerHTML = '<p class="bag-empty">Your bag is empty. Discover the current collection to find your piece.</p>';
-      footer.innerHTML = '<a class="checkout-button" href="index.html#shop" data-close="bag-dialog">Explore the collection</a>';
+      footer.innerHTML = '<a class="checkout-button" href="#collection-products">Explore the collection</a>';
       return;
     }
     content.innerHTML = bag.map((item, index) => {
@@ -152,6 +170,7 @@
   }
   function renderWishlist() {
     const root = $('#wish-content');
+    if (!root) return;
     if (!saved.length) { root.innerHTML = '<p class="bag-empty">No saved pieces yet. Use the heart on a product to keep it here.</p>'; return; }
     root.innerHTML = saved.map(id => {
       const p = productById(id);
@@ -171,16 +190,19 @@
   function closeDialog(id) { const dialog = document.getElementById(id); if (dialog?.open) dialog.close(); }
   function collectionPage(collection) {
     const section = $('#collection-page');
-    if (!collection || collection.status !== 'Available') return false;
-    const homeSections = $$('#main > section:not(#collection-page)');
-    homeSections.forEach(el => { el.hidden = true; });
-    $('.ticker').hidden = true;
+    if (!collection || !section) return false;
+    const allCollectionsHref = `${asset('collections/index.html')}`;
     section.hidden = false;
     section.dataset.collection = collection.id;
-    section.innerHTML = `<a class="collection-back" href="index.html#collections">← All collections</a><div class="collection-page-head"><div class="collection-page-hero"><img src="${collection.artwork}" alt="${collection.animal} artwork for Collection ${collection.id}"></div><div><p class="eyebrow">King Stripe / Collection ${collection.id}</p><h1 id="collection-page-title">${collection.animal}<em>× ${collection.colour}</em></h1><p class="collection-tagline">${collection.tagline}</p><p>${collection.description}</p><a class="button button-light" href="#collection-products">Explore the drop <span>↓</span></a></div></div><div class="collection-story"><div><p class="eyebrow">The identity / 001</p><h2>${collection.animal.toUpperCase()}<br>AFTER DARK.</h2><p>Collection colour shapes the atmosphere. The animal gives this release its own voice. Garment colourways stay specific to each piece.</p></div><div class="collection-artwork"><img src="assets/tiger_scarred.svg" alt="Alternate tiger artwork for Collection ${collection.id}"><span>ARTWORK DETAIL / 001</span></div></div><div class="section-topline"><span>COLLECTION ${collection.id} / PRODUCTS</span><span>${collection.productIds.length} PIECES</span></div><div class="collection-page-products"><div class="product-grid" id="collection-products"></div></div><div class="collection-campaign"><span class="eyebrow">CAMPAIGN / ${collection.id}</span><p>Campaign photography for this collection will appear here when approved images are available.</p></div><div class="collection-garment"><p class="eyebrow">THE CLOTHING</p><h2>ART HAS A HOME.<br><em>THE GARMENT IS IT.</em></h2><p>Explore the available silhouettes, garment colours and sizes in the pieces above.</p></div><a class="collection-back" href="index.html#collections">← Return to all collections</a>`;
-    document.title = `Collection ${collection.id}: ${collection.title} — King Stripe`;
+    const live = collection.status === 'Available';
+    const art = collection.artwork ? `<img src="${asset(collection.artwork)}" alt="${collection.animal} artwork for Collection ${collection.id}">` : `<span class="collection-initials" aria-hidden="true">${collection.animal.slice(0, 2).toUpperCase()}</span>`;
+    const productsBlock = live
+      ? `<section class="collection-page-products" aria-labelledby="collection-products-title"><div class="section-topline"><span>COLLECTION ${collection.id} / PRODUCTS</span><span>${collection.productIds.length} PIECES</span></div><h2 id="collection-products-title">THE ${collection.animal.toUpperCase()} DROP</h2><div class="product-grid" id="collection-products"></div></section>`
+      : `<section class="collection-coming-soon"><p class="eyebrow">Collection in development</p><h2>THIS IDENTITY<br>IS TAKING SHAPE.</h2><p>${collection.animal} × ${collection.colour} is part of the King Stripe collection system. This concept is not on sale yet; product details will appear here when the collection is ready.</p><a class="button button-light" href="${allCollectionsHref}">Back to all collections <span>↗</span></a></section>`;
+    section.innerHTML = `<a class="collection-back" href="${allCollectionsHref}">← All collections</a><div class="collection-page-head" style="--collection-accent:${collection.accent}"><div class="collection-page-hero">${art}<span class="collection-page-index">${collection.id}</span></div><div><p class="eyebrow">King Stripe / ${live ? `Collection ${collection.id}` : 'Collection system'}</p><h1 id="collection-page-title">${collection.animal}<em>× ${collection.colour}</em></h1><p class="collection-tagline">${collection.tagline}</p><p>${live ? collection.description : 'An animal. A colour. A new point of view for King Stripe.'}</p>${live ? '<a class="button button-light" href="#collection-products">Explore the drop <span>↓</span></a>' : '<span class="collection-status">CONCEPT / NOT YET RELEASED</span>'}</div></div>${live ? `<div class="collection-story"><div><p class="eyebrow">The identity / ${collection.id}</p><h2>${collection.animal.toUpperCase()}<br>AFTER DARK.</h2><p>Collection colour shapes the atmosphere. The animal gives this release its own voice. Garment colourways stay specific to each piece.</p></div><div class="collection-artwork"><img src="${asset('assets/tiger_scarred.svg')}" alt="Alternate tiger artwork for Collection ${collection.id}"><span>ARTWORK DETAIL / ${collection.id}</span></div></div>` : ''}${productsBlock}<nav class="collection-next" aria-label="Explore more collections"><span class="eyebrow">Keep exploring the pack</span><a href="${allCollectionsHref}">VIEW ALL ANIMALS & COLOURS <span>↗</span></a></nav>`;
+    document.title = `${collection.animal} × ${collection.colour} — King Stripe`;
     document.body.classList.add('is-collection');
-    renderProducts('#collection-products');
+    if (live) renderProducts('#collection-products');
     return true;
   }
 
@@ -190,14 +212,12 @@
   renderBag();
   renderWishlist();
   updateCounts();
-  const route = new URLSearchParams(location.search).get('collection');
+  const queryRoute = new URLSearchParams(location.search).get('collection');
+  const route = document.body.dataset.slug || queryRoute;
+  if (queryRoute && !document.body.dataset.slug) location.replace(`collections/${queryRoute}/index.html`);
   if (route) {
     const collection = collections.find(item => item.slug === route);
     if (!collectionPage(collection)) notify('That collection is not available yet');
-    else $$('.main-nav a, #mobile-nav a, .footer-bottom a').forEach(link => {
-      const section = link.getAttribute('href')?.split('#')[1];
-      if (section) link.href = `index.html#${section}`;
-    });
   }
 
   $$('.filter').forEach(button => button.addEventListener('click', () => {
@@ -205,7 +225,7 @@
     $$('.filter').forEach(item => { item.classList.toggle('active', item === button); item.setAttribute('aria-pressed', item === button); });
     renderProducts();
   }));
-  $('#product-sort').addEventListener('change', () => renderProducts());
+  $('#product-sort')?.addEventListener('change', () => renderProducts());
   document.addEventListener('click', event => {
     const close = event.target.closest('[data-close]');
     if (close) { event.preventDefault(); closeDialog(close.dataset.close); return; }
@@ -257,7 +277,7 @@
   document.querySelectorAll('dialog').forEach(dialog => dialog.addEventListener('click', event => {
     if (event.target === dialog) dialog.close();
   }));
-  $('#checkout-form').addEventListener('submit', event => {
+  $('#checkout-form')?.addEventListener('submit', event => {
     event.preventDefault();
     if (!event.currentTarget.reportValidity()) return;
     $('#checkout-dialog').close();
@@ -269,15 +289,15 @@
   });
   const menuButton = $('.menu-trigger');
   const mobileNav = $('#mobile-nav');
-  menuButton.addEventListener('click', () => {
+  menuButton?.addEventListener('click', () => {
     const open = menuButton.getAttribute('aria-expanded') === 'true';
     menuButton.setAttribute('aria-expanded', String(!open));
-    mobileNav.hidden = open;
+    if (mobileNav) mobileNav.hidden = open;
     menuButton.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
   });
   $$('#mobile-nav a').forEach(link => link.addEventListener('click', () => {
-    menuButton.setAttribute('aria-expanded', 'false');
-    mobileNav.hidden = true;
-    menuButton.setAttribute('aria-label', 'Open menu');
+    menuButton?.setAttribute('aria-expanded', 'false');
+    if (mobileNav) mobileNav.hidden = true;
+    menuButton?.setAttribute('aria-label', 'Open menu');
   }));
 })();
