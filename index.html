@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11110f">
+  <title>King Stripe — One Brand. Many Identities.</title>
+  <meta name="description" content="Discover King Stripe collections: animal identities, colour stories and streetwear built to be worn.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/king-stripe-collections.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <a class="wordmark" href="index.html" aria-label="King Stripe home"><span class="brand-mark" aria-hidden="true">KS</span><span>KING<br>STRIPE</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#collections">Collections</a>
+      <a href="#shop">Shop</a>
+      <a href="#culture">Culture</a>
+      <a href="#story">Our story</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-action wishlist-trigger" type="button" aria-label="Open wishlist">Saved <span data-wish-count>0</span></button>
+      <button class="bag-trigger" type="button" aria-label="Open bag">Bag <span data-bag-count>0</span><span class="bag-dot"></span></button>
+      <button class="menu-trigger" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu"><i></i><i></i></button>
+    </div>
+  </header>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+    <a href="#collections">Collections <span>01</span></a><a href="#shop">Shop <span>02</span></a><a href="#culture">Culture <span>03</span></a><a href="#story">Our story <span>04</span></a>
+  </nav>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> Independent streetwear / India</p>
+        <h1 id="hero-title">ONE BRAND.<br><em>MANY</em><br>IDENTITIES.</h1>
+        <p class="hero-deck">Collections built around instinct. Each one has its own animal, colour and point of view. All of them belong to King Stripe.</p>
+        <a class="button button-light" href="#collections">Explore the collections <span aria-hidden="true">↘</span></a>
+        <p class="hero-index"><span>THE KING STRIPE SYSTEM</span><span>01 — 04</span></p>
+      </div>
+      <div class="hero-art" aria-label="Tiger artwork for the current featured collection">
+        <div class="hero-art-top"><span data-featured-label>FEATURED IDENTITY</span><span data-featured-number>001 / 004</span></div>
+        <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+        <img data-featured-art src="assets/tiger_crowned.svg" alt="Crowned tiger illustration representing the current collection">
+        <div class="hero-art-label"><span>THE CURRENT COLLECTION</span><strong data-featured-title>TIGER <b>×</b> BLACK</strong></div>
+        <span class="hero-side-note" data-featured-tagline>POWER · INSTINCT · PRESENCE</span>
+      </div>
+      <div class="hero-bottom"><span>RULE YOUR OWN WILD.</span><span>SCROLL TO DISCOVER ↓</span></div>
+    </section>
+
+    <div class="ticker" aria-label="One brand, many identities"><div>ONE BRAND <b>✳</b> MANY IDENTITIES <b>✳</b> RULE YOUR OWN WILD</div></div>
+
+    <section class="collection-section section-shell" id="collections" aria-labelledby="collections-title">
+      <div class="section-topline"><span>THE COLLECTION SYSTEM</span><span>01 — DISCOVER</span></div>
+      <div class="section-heading-row"><div><p class="eyebrow">Choose your instinct</p><h2 id="collections-title">COLLECTIONS<br><em>WITH CHARACTER.</em></h2></div><p class="section-intro">One shared attitude. Different identities. Start with the collection that's out in the world now.</p></div>
+      <div class="collection-grid" id="collection-grid"></div>
+      <p class="concept-note"><span class="note-mark">i</span> Wolf × Grey, Panther × Red and Eagle × Blue are concept examples only. They are not announced collections.</p>
+    </section>
+
+    <section class="shop-section" id="shop" aria-labelledby="shop-title">
+      <div class="section-shell">
+        <div class="section-topline"><span>SHOP KING STRIPE</span><span>02 — THE CURRENT DROP</span></div>
+        <div class="shop-title-row"><div><p class="eyebrow">Collection 001 / Tiger × Black</p><h2 id="shop-title">LATEST<br><em>PRODUCTS.</em></h2></div><a class="text-link" href="?collection=tiger-black#collection-page">View collection <span>↗</span></a></div>
+        <div class="shop-toolbar"><div class="filter-list" role="group" aria-label="Filter products"><button class="filter active" data-filter="all" aria-pressed="true">All pieces</button><button class="filter" data-filter="Pullover" aria-pressed="false">Pullovers</button><button class="filter" data-filter="Zip" aria-pressed="false">Zip-ups</button><button class="filter" data-filter="Oversized" aria-pressed="false">Oversized</button></div><label class="sort-label">Sort <select id="product-sort" aria-label="Sort products"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label></div>
+        <div class="product-grid" id="product-grid"></div>
+      </div>
+    </section>
+
+    <section class="philosophy" id="story" aria-labelledby="philosophy-title">
+      <div class="philosophy-image"><img src="assets/tiger_scarred.svg" alt="Crowned tiger artwork from Collection 001"><span class="image-caption">ARTWORK / COLLECTION 001</span><span class="image-number">KS—001</span></div>
+      <div class="philosophy-copy"><p class="eyebrow">The King Stripe point of view</p><h2 id="philosophy-title">DIFFERENT<br>INSTINCTS.<br><em>ONE ATTITUDE.</em></h2><p>King Stripe is the world that holds every collection together. Animals bring the identity. Colour sets the mood. The clothing carries it into everyday life.</p><p>Each collection gets room to be its own thing, without losing the mark that makes it King Stripe.</p><a href="#culture" class="text-link">More about the brand <span>↘</span></a></div>
+    </section>
+
+    <section class="culture section-shell" id="culture" aria-labelledby="culture-title">
+      <div class="section-topline"><span>CAMPAIGN / 001</span><span>TIGER × BLACK</span></div>
+      <div class="culture-frame">
+        <div class="culture-art"><div class="culture-cross"></div><img src="assets/tiger_crowned.svg" alt="Tiger artwork, the visual identity of Collection 001"></div>
+        <div class="culture-copy"><p class="eyebrow">The culture / Collection 001</p><h2 id="culture-title">AN INSTINCT<br>OF ITS <em>OWN.</em></h2><p>A first look at the Tiger × Black identity. The crowned tiger belongs to this collection; King Stripe is the name above it.</p><a class="button button-light" href="?collection=tiger-black#collection-page">Enter Tiger × Black <span>↗</span></a><span class="culture-foot">COLLECTION ARTWORK — CAMPAIGN PHOTOGRAPHY NOT YET ADDED</span></div>
+      </div>
+    </section>
+
+    <section class="garment-section" aria-labelledby="garment-title">
+      <div class="section-shell garment-layout"><div><div class="section-topline"><span>THE PRODUCT</span><span>BUILT TO BE WORN</span></div><p class="eyebrow">Clothing before concept</p><h2 id="garment-title">MADE FOR<br><em>REAL LIFE.</em></h2><p class="garment-lede">The animal sets the character of a collection. The garment still has to earn its place in your rotation.</p></div><div class="garment-facts"><article><span>01</span><h3>THE SILHOUETTE</h3><p>Choose the shape that feels right: pullover, full zip or oversized.</p></article><article><span>02</span><h3>YOUR COLOURWAY</h3><p>Collection colour and garment colour are separate choices. Pick your garment colour on each product.</p></article><article><span>03</span><h3>THE DETAILS</h3><p>Open a product to see its available colours, sizes and the product information supplied for that piece.</p></article></div></div>
+    </section>
+
+    <section class="support section-shell" id="support" aria-labelledby="support-title"><div class="section-topline"><span>PRODUCT GUIDE</span><span>04 — THE DETAILS</span></div><div class="support-layout"><div><p class="eyebrow">A few useful things</p><h2 id="support-title">BEFORE YOU<br><em>CHOOSE.</em></h2></div><div class="support-list"><details><summary>Are collection colours the same as garment colours?</summary><p>No. A collection’s colour is part of its visual identity. Each product lists its own garment colourways separately.</p></details><details><summary>Which collections can I shop right now?</summary><p>Tiger × Black is the current collection represented in this preview. The other animal and colour combinations shown above are concept examples, not available releases.</p></details><details><summary>Where can I check fit and size information?</summary><p>Open a product to review its available sizes and product details. A verified size chart can be added when the final measurements are supplied.</p></details></div></div></section>
+
+    <section class="newsletter" aria-labelledby="newsletter-title"><div class="section-shell newsletter-inner"><div><p class="eyebrow">King Stripe / Dispatch</p><h2 id="newsletter-title">JOIN THE<br><em>PACK.</em></h2></div><div><p>One brand, many identities. Keep exploring the collection that's here now.</p><a class="button button-dark" href="?collection=tiger-black#collection-page">Explore Collection 001 <span>↗</span></a><small>New collection announcements will appear here when they are confirmed.</small></div></div></section>
+
+    <section class="collection-page section-shell" id="collection-page" hidden aria-labelledby="collection-page-title"></section>
+  </main>
+
+  <footer class="footer"><div class="footer-top"><a class="footer-brand" href="index.html">KING<br>STRIPE<span>®</span></a><p>One brand.<br>Many identities.</p><a class="back-top" href="#main">Back to top ↑</a></div><div class="footer-bottom"><span>RULE YOUR OWN WILD.</span><div><a href="#collections">Collections</a><a href="#shop">Shop</a><a href="#story">Our story</a><a href="#support">Product guide</a></div><span>© KING STRIPE</span></div></footer>
+
+  <dialog class="product-dialog" id="product-dialog" aria-labelledby="dialog-title"></dialog>
+  <dialog class="bag-dialog" id="bag-dialog" aria-labelledby="bag-title"><div class="dialog-heading"><div><p class="eyebrow">King Stripe</p><h2 id="bag-title">YOUR BAG <span data-bag-count>0</span></h2></div><button class="close-dialog" data-close="bag-dialog" aria-label="Close bag">×</button></div><div id="bag-content"></div><div id="bag-footer"></div></dialog>
+  <dialog class="bag-dialog wish-dialog" id="wish-dialog" aria-labelledby="wish-title"><div class="dialog-heading"><div><p class="eyebrow">Keep an eye on it</p><h2 id="wish-title">SAVED PIECES <span data-wish-count>0</span></h2></div><button class="close-dialog" data-close="wish-dialog" aria-label="Close saved pieces">×</button></div><div id="wish-content"></div></dialog>
+  <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="checkout-title"><div class="dialog-heading"><div><p class="eyebrow">Preview checkout</p><h2 id="checkout-title">YOUR DETAILS</h2></div><button class="close-dialog" data-close="checkout-dialog" aria-label="Close checkout">×</button></div><form id="checkout-form"><p>This demo does not send your details or process a payment.</p><label>Name<input name="name" required autocomplete="name"></label><label>Email<input name="email" type="email" required autocomplete="email"></label><label>Delivery address<textarea name="address" required autocomplete="street-address"></textarea></label><button class="checkout-button" type="submit">Review demo order</button></form></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="assets/js/king-stripe-collections.js" defer></script>
+</body>
+</html>
