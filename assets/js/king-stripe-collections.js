@@ -11,9 +11,9 @@
   ];
   const collections = [
     { id: '001', slug: 'tiger-black', animal: 'Tiger', colour: 'Black', title: 'Tiger × Black', tagline: 'Power in every stripe.', description: 'The current King Stripe collection. Tiger artwork, a black-led identity and six hoodie silhouettes to explore.', status: 'Available', featured: true, artwork: 'assets/tiger_crowned.svg', heroImage: 'assets/tiger_crowned.svg', campaignImages: [], productIds: products.map(p => p.id), accent: '#191916' },
-    { id: '002', slug: 'wolf-grey', animal: 'Wolf', colour: 'Grey', tagline: 'Independence · Loyalty · Strength', status: 'Concept example', accent: '#868782', campaignImages: [], productIds: [] },
-    { id: '003', slug: 'panther-red', animal: 'Panther', colour: 'Red', tagline: 'Stealth · Confidence · Intensity', status: 'Concept example', accent: '#621d22', campaignImages: [], productIds: [] },
-    { id: '004', slug: 'eagle-blue', animal: 'Eagle', colour: 'Blue', tagline: 'Vision · Freedom · Ambition', status: 'Concept example', accent: '#293b50', campaignImages: [], productIds: [] }
+    { id: '002', slug: 'wolf-grey', animal: 'Wolf', colour: 'Grey', title: 'Wolf × Grey', tagline: 'Independence · Loyalty · Strength', description: 'A grey-led identity built around the wolf.', status: 'Concept example', accent: '#868782', artwork: 'assets/collections/wolf-grey.svg', campaignImages: [], productIds: [] },
+    { id: '003', slug: 'panther-red', animal: 'Panther', colour: 'Red', title: 'Panther × Red', tagline: 'Stealth · Confidence · Intensity', description: 'A red-led identity built around the panther.', status: 'Concept example', accent: '#621d22', artwork: 'assets/collections/panther-red.svg', campaignImages: [], productIds: [] },
+    { id: '004', slug: 'eagle-blue', animal: 'Eagle', colour: 'Blue', title: 'Eagle × Blue', tagline: 'Vision · Freedom · Ambition', description: 'A blue-led identity built around the eagle.', status: 'Concept example', accent: '#293b50', artwork: 'assets/collections/eagle-blue.svg', campaignImages: [], productIds: [] }
   ];
   const colourValues = { Bone: '#ded9ca', Midnight: '#11110f', Ember: '#a5a4a0', Ash: '#777770' };
   const money = value => `₹${value.toLocaleString('en-IN')}`;
@@ -72,7 +72,7 @@
     if (!grid) return;
     grid.innerHTML = collections.map(collection => {
       const actual = collection.status === 'Available';
-      const art = actual
+      const art = collection.artwork
         ? `<img src="${asset(collection.artwork)}" alt="" aria-hidden="true">`
         : `<span aria-hidden="true">${collection.animal.slice(0, 2).toUpperCase()}</span>`;
       const inner = `<div class="collection-card-top"><span>${actual ? `COLLECTION ${collection.id}` : `SYSTEM EXAMPLE ${collection.id}`}</span><span>${actual ? 'AVAILABLE ↗' : 'PREVIEW ↗'}</span></div><div class="collection-card-art">${art}</div><div class="collection-card-bottom"><div><small>${collection.animal.toUpperCase()} / ${collection.colour.toUpperCase()}${actual ? '' : ' · CONCEPT'}</small><strong>${collection.animal}<b>×</b>${collection.colour}</strong><span class="collection-tagline">${collection.tagline}</span></div><span aria-hidden="true">↗</span></div>`;

@@ -99,6 +99,23 @@ dialog{border:0;padding:0;background:var(--paper);color:var(--ink);max-width:min
 .pack-section .collection-card{min-height:350px}
 .pack-section .collection-card.is-concept{cursor:pointer}
 .pack-section .collection-card.is-concept:hover{transform:translateY(-5px)}
+.collection-card.is-concept{cursor:pointer}
+.collection-card.is-concept:hover{transform:translateY(-4px)}
+.pack-hero-mark{isolation:isolate;padding:13px}
+.pack-hero-mark::before,.pack-hero-mark::after{z-index:-1}
+.pack-hero-art-grid{position:relative;z-index:1;width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px}
+.pack-hero-art-grid a{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;place-items:center;background:#252521;color:var(--white);border:1px solid rgba(255,255,255,.17);padding:8px;transition:background .25s,border-color .25s,transform .25s}
+.pack-hero-art-grid a:nth-child(2){background:#777871;color:var(--ink)}
+.pack-hero-art-grid a:nth-child(3){background:#621d22}
+.pack-hero-art-grid a:nth-child(4){background:#293b50}
+.pack-hero-art-grid a:hover{z-index:2;transform:scale(1.025);border-color:var(--signal)}
+.pack-hero-art-grid img{width:72%;height:100%;max-height:160px;object-fit:contain;filter:brightness(0) invert(1);mix-blend-mode:screen;opacity:.94;transition:transform .35s var(--ease)}
+.pack-hero-art-grid a:hover img{transform:scale(1.06)}
+.pack-hero-art-grid a>span{font:500 clamp(7px,.8vw,10px)/1.2 var(--mono);letter-spacing:.08em;white-space:nowrap}
+.pack-hero-art-grid a>span b{color:var(--signal);padding:0 3px}
+.pack-hero-mark .pack-monogram{position:absolute;z-index:3;top:21px;left:21px;display:grid;place-items:center;width:26px;height:26px;background:var(--paper);color:var(--ink);font:500 9px var(--mono);letter-spacing:-.05em}
+.pack-hero-mark i{z-index:3;top:26px;left:auto;right:22px;background:rgba(17,17,15,.62);padding:5px 7px;color:var(--white);font-size:7px}
+.pack-hero-mark b{z-index:3;right:20px;bottom:20px}
 .pack-section .concept-note{color:rgba(255,255,255,.62)}
 .pack-future{display:flex;align-items:center;justify-content:space-between;gap:32px;padding-top:58px;padding-bottom:66px}
 .pack-future>p{max-width:460px;color:#5b5a53;font-size:14px}
