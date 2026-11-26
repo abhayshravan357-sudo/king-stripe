@@ -15,6 +15,12 @@
     { id: '003', slug: 'panther-red', animal: 'Panther', colour: 'Red', title: 'Panther × Red', tagline: 'Stealth · Confidence · Intensity', description: 'A red-led identity built around the panther.', status: 'Concept example', accent: '#621d22', artwork: 'assets/collections/panther-red.png', campaignImages: [], productIds: [] },
     { id: '004', slug: 'eagle-blue', animal: 'Eagle', colour: 'Blue', title: 'Eagle × Blue', tagline: 'Vision · Freedom · Ambition', description: 'A blue-led identity built around the eagle.', status: 'Concept example', accent: '#293b50', artwork: 'assets/collections/eagle-blue.svg', campaignImages: [], productIds: [] }
   ];
+  const collectionArtwork = {
+    tiger: { width: 300, height: 214, scale: 0.94, x: 0, y: -2 },
+    wolf: { width: 410, height: 238, scale: 1.07, x: 0, y: -2 },
+    panther: { width: 390, height: 226, scale: 1.03, x: 0, y: 0 },
+    eagle: { width: 440, height: 230, scale: 1.06, x: 0, y: -1 }
+  };
   const colourValues = { Bone: '#ded9ca', Midnight: '#11110f', Ember: '#a5a4a0', Ash: '#777770' };
   const money = value => `₹${value.toLocaleString('en-IN')}`;
   const $ = (query, root = document) => root.querySelector(query);
@@ -72,10 +78,12 @@
     if (!grid) return;
     grid.innerHTML = collections.map(collection => {
       const actual = collection.status === 'Available';
+      const artwork = collectionArtwork[collection.animal.toLowerCase()] || { width: 400, height: 230, scale: 1, x: 0, y: 0 };
       const art = collection.artwork
         ? `<img src="${asset(collection.artwork)}" alt="" aria-hidden="true">`
         : `<span aria-hidden="true">${collection.animal.slice(0, 2).toUpperCase()}</span>`;
-      const inner = `<div class="collection-card-top"><span>${actual ? `COLLECTION ${collection.id}` : `SYSTEM EXAMPLE ${collection.id}`}</span><span>${actual ? 'AVAILABLE ↗' : 'PREVIEW ↗'}</span></div><div class="collection-card-art">${art}</div><div class="collection-card-bottom"><div><small>${collection.animal.toUpperCase()} / ${collection.colour.toUpperCase()}${actual ? '' : ' · CONCEPT'}</small><strong>${collection.animal}<b>×</b>${collection.colour}</strong><span class="collection-tagline">${collection.tagline}</span></div><span aria-hidden="true">↗</span></div>`;
+      const artStyle = `--art-max-width:${artwork.width}px;--art-max-height:${artwork.height}px;--art-scale:${artwork.scale};--art-offset-x:${artwork.x}px;--art-offset-y:${artwork.y}px`;
+      const inner = `<div class="collection-card-top"><span>${actual ? `COLLECTION ${collection.id}` : `SYSTEM EXAMPLE ${collection.id}`}</span><span>${actual ? 'AVAILABLE ↗' : 'PREVIEW ↗'}</span></div><div class="collection-card-art" style="${artStyle}">${art}</div><div class="collection-card-bottom"><div><small>${collection.animal.toUpperCase()} / ${collection.colour.toUpperCase()}${actual ? '' : ' · CONCEPT'}</small><strong>${collection.animal}<b>×</b>${collection.colour}</strong><span class="collection-tagline">${collection.tagline}</span></div><span aria-hidden="true">↗</span></div>`;
       return actual
         ? `<a class="collection-card" data-reveal data-collection="${collection.id}" style="--collection:${collection.accent}" href="${collectionBase}${collection.slug}/index.html" aria-label="Explore Collection ${collection.id}: ${collection.title}">${inner}</a>`
         : `<a class="collection-card is-concept" data-reveal data-concept="${collection.animal.toLowerCase()}" style="--collection:${collection.accent}" href="${collectionBase}${collection.slug}/index.html" aria-label="Explore the ${collection.animal} and ${collection.colour} collection concept">${inner}</a>`;
