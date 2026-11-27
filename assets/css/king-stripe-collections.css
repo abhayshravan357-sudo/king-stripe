@@ -180,9 +180,8 @@ dialog{border:0;padding:0;background:var(--paper);color:var(--ink);max-width:min
 .collection-grid .collection-card:hover .collection-card-bottom>span{transform:rotate(45deg);background:var(--signal);border-color:var(--signal);}
 .collection-grid .collection-card:focus-visible{transform:translateY(-4px);}
 .collection-grid .collection-card.is-concept{cursor:pointer;}
-.collection-grid .collection-card[data-concept="wolf"]{color:#f5f3ed;}
-.collection-grid .collection-card[data-concept="panther"]{--collection:#621d22;color:#f5f3ed;}
-.collection-grid .collection-card[data-concept="eagle"]{--collection:#293b50;color:#f5f3ed;}
+.collection-grid .collection-card[data-concept]{color:#f5f3ed;}
+.collection-grid .collection-card[data-concept] .collection-card-art img{filter:grayscale(1) invert(1) sepia(.1);}
 @media(max-width:950px){.collection-grid .collection-card{min-height:350px;}}
 @media(max-width:760px){.pack-section .collection-card{min-height:320px;}}
 @media(max-width:620px){

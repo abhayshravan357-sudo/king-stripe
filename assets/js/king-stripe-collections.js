@@ -11,9 +11,9 @@
   ];
   const collections = [
     { id: '001', slug: 'tiger-black', animal: 'Tiger', colour: 'Black', title: 'Tiger × Black', tagline: 'Power in every stripe.', description: 'The current King Stripe collection. Tiger artwork, a black-led identity and six hoodie silhouettes to explore.', status: 'Available', featured: true, artwork: 'assets/tiger_crowned.svg', heroImage: 'assets/tiger_crowned.svg', campaignImages: [], productIds: products.map(p => p.id), accent: '#191916' },
-    { id: '002', slug: 'wolf-grey', animal: 'Wolf', colour: 'Grey', title: 'Wolf × Grey', tagline: 'Independence · Loyalty · Strength', description: 'A grey-led identity built around the wolf.', status: 'Concept example', accent: '#4c4e4b', artwork: 'assets/collections/wolf-grey.svg', campaignImages: [], productIds: [] },
-    { id: '003', slug: 'panther-red', animal: 'Panther', colour: 'Red', title: 'Panther × Red', tagline: 'Stealth · Confidence · Intensity', description: 'A red-led identity built around the panther.', status: 'Concept example', accent: '#621d22', artwork: 'assets/collections/panther-red.png', campaignImages: [], productIds: [] },
-    { id: '004', slug: 'eagle-blue', animal: 'Eagle', colour: 'Blue', title: 'Eagle × Blue', tagline: 'Vision · Freedom · Ambition', description: 'A blue-led identity built around the eagle.', status: 'Concept example', accent: '#293b50', artwork: 'assets/collections/eagle-blue.svg', campaignImages: [], productIds: [] }
+    { id: '002', slug: 'wolf-grey', animal: 'Wolf', colour: 'Grey', title: 'Wolf × Grey', tagline: 'Independence · Loyalty · Strength', description: 'A grey-led identity built around the wolf.', status: 'Concept example', accent: '#30383A', artwork: 'assets/collections/wolf-grey.svg', campaignImages: [], productIds: [] },
+    { id: '003', slug: 'panther-red', animal: 'Panther', colour: 'Red', title: 'Panther × Red', tagline: 'Stealth · Confidence · Intensity', description: 'A red-led identity built around the panther.', status: 'Concept example', accent: '#651D26', artwork: 'assets/collections/panther-red.png', campaignImages: [], productIds: [] },
+    { id: '004', slug: 'eagle-blue', animal: 'Eagle', colour: 'Blue', title: 'Eagle × Blue', tagline: 'Vision · Freedom · Ambition', description: 'A blue-led identity built around the eagle.', status: 'Concept example', accent: '#20364F', artwork: 'assets/collections/eagle-blue.svg', campaignImages: [], productIds: [] }
   ];
   const collectionArtwork = {
     tiger: { width: 300, height: 214, scale: 0.94, x: 0, y: -2 },
