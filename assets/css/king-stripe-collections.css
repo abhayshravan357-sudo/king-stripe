@@ -180,11 +180,9 @@ dialog{border:0;padding:0;background:var(--paper);color:var(--ink);max-width:min
 .collection-grid .collection-card:hover .collection-card-bottom>span{transform:rotate(45deg);background:var(--signal);border-color:var(--signal);}
 .collection-grid .collection-card:focus-visible{transform:translateY(-4px);}
 .collection-grid .collection-card.is-concept{cursor:pointer;}
-.collection-grid .collection-card[data-concept="wolf"]{--collection:#7d7f7b;color:#141412;}
+.collection-grid .collection-card[data-concept="wolf"]{color:#f5f3ed;}
 .collection-grid .collection-card[data-concept="panther"]{--collection:#621d22;color:#f5f3ed;}
 .collection-grid .collection-card[data-concept="eagle"]{--collection:#293b50;color:#f5f3ed;}
-.collection-grid .collection-card[data-concept="wolf"]::before,.collection-grid .collection-card[data-concept="eagle"]::before{border-color:rgba(10,10,10,.24);}
-.collection-grid .collection-card[data-concept="wolf"] .collection-card-top span:last-child,.collection-grid .collection-card[data-concept="eagle"] .collection-card-top span:last-child{border-color:rgba(0,0,0,.4);}
 @media(max-width:950px){.collection-grid .collection-card{min-height:350px;}}
 @media(max-width:760px){.pack-section .collection-card{min-height:320px;}}
 @media(max-width:620px){
