@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11110f">
+  <title>Your profile — King Stripe</title>
+  <meta name="description" content="Manage your King Stripe contact details, delivery addresses and optional style preferences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/king-stripe-collections.css">
+</head>
+<body class="profile-page">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <a class="wordmark" href="index.html" aria-label="King Stripe home"><span class="brand-mark" aria-hidden="true">KS</span><span>KING<br>STRIPE</span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="collections/index.html">Collections</a><a href="index.html#shop">Shop</a><a href="profile.html" aria-current="page">Your profile</a></nav>
+    <div class="header-actions"><a class="icon-action profile-home-link" href="index.html">Back to shop <span>↗</span></a></div>
+  </header>
+  <main id="main" class="profile-main">
+    <section class="profile-intro"><p class="eyebrow"><span class="eyebrow-dot"></span> YOUR KING STRIPE SPACE</p><h1>MAKE IT<br><em>YOUR OWN.</em></h1><p>Keep delivery details handy, remember your fit and choose if you’d like a birthday surprise. Add only what’s useful to you.</p><div class="profile-save-note"><span>◎</span><span><strong>Saved on this device</strong><br>This preview stores your profile in this browser only. It is not sent to King Stripe or synced to other devices.</span></div></section>
+    <section class="profile-panel" aria-labelledby="details-title">
+      <div class="profile-panel-heading"><div><p class="eyebrow">01 / CONTACT</p><h2 id="details-title">YOUR DETAILS</h2></div><span class="profile-edit-hint">EDIT ANYTIME</span></div>
+      <form id="profile-form">
+        <div class="profile-form-grid">
+          <label>First name<input name="firstName" autocomplete="given-name" placeholder="How should we address you?"></label>
+          <label>Last name<input name="lastName" autocomplete="family-name" placeholder="Optional"></label>
+          <label>Email address<input name="email" type="email" autocomplete="email" placeholder="you@example.com"></label>
+          <label>Phone number <span class="optional-label">OPTIONAL</span><input name="phone" type="tel" autocomplete="tel" placeholder="For delivery updates"></label>
+        </div>
+        <div class="profile-panel-heading profile-subheading"><div><p class="eyebrow">02 / DELIVERY</p><h2>YOUR ADDRESS</h2></div><span class="profile-edit-hint">OPTIONAL UNTIL CHECKOUT</span></div>
+        <div class="profile-form-grid">
+          <label class="profile-wide">Address line<input name="address1" autocomplete="address-line1" placeholder="Flat, house number and street"></label>
+          <label class="profile-wide">Address line 2 <span class="optional-label">OPTIONAL</span><input name="address2" autocomplete="address-line2" placeholder="Apartment, suite, landmark"></label>
+          <label>City<input name="city" autocomplete="address-level2"></label>
+          <label>State / region<input name="region" autocomplete="address-level1"></label>
+          <label>PIN / postal code<input name="postalCode" autocomplete="postal-code" inputmode="numeric"></label>
+          <label>Country<input name="country" autocomplete="country-name" value="India"></label>
+        </div>
+        <div class="profile-panel-heading profile-subheading"><div><p class="eyebrow">03 / YOUR FIT</p><h2>STYLE NOTES</h2></div><span class="profile-edit-hint">ALL OPTIONAL</span></div>
+        <div class="profile-form-grid">
+          <label>Usual size<select name="usualSize"><option value="">Choose a size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
+          <label>Fit you prefer<select name="fit"><option value="">Choose a fit</option><option>Regular</option><option>Relaxed</option><option>Oversized</option></select></label>
+          <label class="profile-wide">Collections you’re into<input name="favouriteCollections" placeholder="For example: Tiger × Black"></label>
+        </div>
+        <div class="profile-panel-heading profile-subheading"><div><p class="eyebrow">04 / A LITTLE CELEBRATION</p><h2>MARK A DATE</h2></div><span class="profile-edit-hint">YOUR CHOICE</span></div>
+        <p class="profile-helper">Add your birthday for a possible birthday treat, or use your first order date for an annual thank-you. Leave both blank if you prefer.</p>
+        <div class="profile-form-grid profile-dates">
+          <label>Birthday <span class="optional-label">OPTIONAL</span><input name="birthday" type="date" autocomplete="bday"></label>
+          <label>First order date <span class="optional-label">OPTIONAL</span><input name="firstOrderDate" type="date"><small>We’ll remember the date you enter; this demo won’t send an offer.</small></label>
+        </div>
+        <div class="profile-form-actions"><button class="button button-light" type="submit">Save my details <span>↗</span></button><button class="profile-clear" type="button" id="clear-profile">Clear profile</button><span id="profile-status" role="status" aria-live="polite"></span></div>
+      </form>
+    </section>
+    <section class="profile-privacy"><span class="profile-privacy-mark">✳</span><div><p class="eyebrow">YOU’RE IN CONTROL</p><h2>ONLY SHARE<br>WHAT FEELS RIGHT.</h2><p>Contact and address details help with checkout and delivery. A birthday or anniversary is entirely optional. Size and style notes can make shopping easier. You can update or clear everything above whenever you like.</p></div></section>
+  </main>
+  <footer class="footer"><div class="footer-top"><a class="footer-brand" href="index.html">KING<br>STRIPE<span>®</span></a><p>One brand.<br>Many identities.</p><a class="back-top" href="#main">Back to top ↑</a></div><div class="footer-bottom"><span>RULE YOUR OWN WILD.</span><div><a href="collections/index.html">Collections</a><a href="index.html#shop">Shop</a><a href="index.html#support">Product guide</a></div><span>© KING STRIPE</span></div></footer>
+  <script src="assets/js/king-stripe-profile.js" defer></script>
+</body>
+</html>

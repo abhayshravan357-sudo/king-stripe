@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kingstripe
+      POSTGRES_USER: kingstripe
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in backend/.env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kingstripe -d kingstripe"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  api:
+    build: .
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+psycopg://kingstripe:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in backend/.env}@db:5432/kingstripe
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000,http://localhost:8080,http://127.0.0.1:8080}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-disabled}
+      PAYMENT_MODE: ${PAYMENT_MODE:-test}
+      ALLOW_LIVE_PAYMENTS: ${ALLOW_LIVE_PAYMENTS:-false}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+      INVENTORY_MODE: ${INVENTORY_MODE:-disabled}
+      RESERVATION_MINUTES: ${RESERVATION_MINUTES:-15}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
+      ADMIN_SESSION_HOURS: ${ADMIN_SESSION_HOURS:-8}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+volumes:
+  postgres_data:

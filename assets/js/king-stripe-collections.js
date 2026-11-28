@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const products = [
+  let products = [
     { id: 1, name: 'Crowned Tiger', type: 'Pullover', price: 3499, colourways: ['Bone', 'Midnight', 'Ember'], sizes: ['S', 'M', 'L', 'XL', 'XXL'], collection: '001' },
     { id: 2, name: 'Midnight King', type: 'Zip', price: 3999, colourways: ['Midnight', 'Ash'], sizes: ['S', 'M', 'L', 'XL', 'XXL'], collection: '001' },
     { id: 3, name: 'Rock Throne', type: 'Oversized', price: 4299, colourways: ['Bone', 'Ash'], sizes: ['S', 'M', 'L', 'XL', 'XXL'], collection: '001' },
@@ -9,7 +9,7 @@
     { id: 5, name: 'Ash Prowl', type: 'Zip', price: 3899, colourways: ['Ash', 'Bone'], sizes: ['S', 'M', 'L', 'XL', 'XXL'], collection: '001' },
     { id: 6, name: 'Night Orbit', type: 'Oversized', price: 4499, colourways: ['Midnight', 'Ember'], sizes: ['S', 'M', 'L', 'XL', 'XXL'], collection: '001' }
   ];
-  const collections = [
+  let collections = [
     { id: '001', slug: 'tiger-black', animal: 'Tiger', colour: 'Black', title: 'Tiger × Black', tagline: 'Power in every stripe.', description: 'The current King Stripe collection. Tiger artwork, a black-led identity and six hoodie silhouettes to explore.', status: 'Available', featured: true, artwork: 'assets/tiger_crowned.svg', heroImage: 'assets/tiger_crowned.svg', campaignImages: [], productIds: products.map(p => p.id), accent: '#191916' },
     { id: '002', slug: 'wolf-grey', animal: 'Wolf', colour: 'Grey', title: 'Wolf × Grey', tagline: 'Independence · Loyalty · Strength', description: 'A grey-led identity built around the wolf.', status: 'Concept example', accent: '#30383A', artwork: 'assets/collections/wolf-grey.svg', campaignImages: [], productIds: [] },
     { id: '003', slug: 'panther-red', animal: 'Panther', colour: 'Red', title: 'Panther × Red', tagline: 'Stealth · Confidence · Intensity', description: 'A red-led identity built around the panther.', status: 'Concept example', accent: '#651D26', artwork: 'assets/collections/panther-red.png', campaignImages: [], productIds: [] },
@@ -28,6 +28,8 @@
   const asset = path => `${document.body.dataset.assetPrefix || ''}${path}`;
   const collectionBase = document.body.hasAttribute('data-collection-base') ? document.body.dataset.collectionBase : 'collections/';
   const productById = id => products.find(product => product.id === Number(id));
+  const apiBase = (window.KING_STRIPE_API || 'http://localhost:8000').replace(/\/$/, '');
+  let backendAvailable = false;
   let bag = safeRead('ks-redesign-bag', []);
   let saved = safeRead('ks-redesign-saved', []);
   let selectedFilter = 'all';
@@ -127,6 +129,32 @@
   function updateCounts() {
     $$('[data-bag-count]').forEach(el => el.textContent = bag.reduce((total, item) => total + item.quantity, 0));
     $$('[data-wish-count]').forEach(el => el.textContent = saved.length);
+  }
+  async function loadBackendCatalog() {
+    try {
+      const [collectionResponse, productResponse] = await Promise.all([
+        fetch(`${apiBase}/api/v1/collections`), fetch(`${apiBase}/api/v1/products`)
+      ]);
+      if (!collectionResponse.ok || !productResponse.ok) throw new Error('Catalog unavailable');
+      const apiCollections = await collectionResponse.json();
+      const apiProducts = await productResponse.json();
+      collections = apiCollections.map((c, index) => ({ ...c, id: String(index + 1).padStart(3, '0'), heroImage: c.artwork, campaignImages: [], productIds: [] }));
+      products = apiProducts.map(p => {
+        const variants = p.variants;
+        const collection = collections.find(c => c.slug === p.collection);
+        const product = { id: p.id, name: p.name, type: p.type, price: Math.round(variants[0].price_minor / 100), colourways: [...new Set(variants.map(v => v.colour))], sizes: [...new Set(variants.map(v => v.size))], collection: collection?.id || '001', variants };
+        if (collection) collection.productIds.push(product.id);
+        return product;
+      });
+      backendAvailable = true;
+      renderFeaturedCollection(); renderCollections(); renderProducts(); renderBag(); updateCounts();
+      const note = $('#checkout-form p');
+      const button = $('#checkout-form button[type="submit"]');
+      if (note) note.textContent = 'Your order is securely recorded as pending. Online payments are not configured yet.';
+      if (button) button.textContent = 'Create pending order';
+    } catch (error) {
+      console.info('King Stripe API is not connected; showing the existing preview catalog.');
+    }
   }
   function notify(message) {
     const toast = $('#toast');
@@ -287,7 +315,79 @@
   }));
   $('#checkout-form')?.addEventListener('submit', event => {
     event.preventDefault();
-    if (!event.currentTarget.reportValidity()) return;
+    const checkoutForm = event.currentTarget;
+    if (!checkoutForm.reportValidity()) return;
+    if (backendAvailable) {
+      const form = new FormData(checkoutForm);
+      let idempotencyKey = sessionStorage.getItem('ks-checkout-idempotency');
+      if (!idempotencyKey) {
+        idempotencyKey = crypto.randomUUID();
+        sessionStorage.setItem('ks-checkout-idempotency', idempotencyKey);
+      }
+      const items = bag.map(item => {
+        const product = productById(item.id);
+        const variant = product?.variants.find(v => v.colour === item.colour && v.size === item.size);
+        return variant ? { variant_id: variant.id, quantity: item.quantity } : null;
+      });
+      if (!items.length || items.some(item => !item)) { notify('One or more bag items are no longer available'); return; }
+      const button = checkoutForm.querySelector('button[type="submit"]');
+      button.disabled = true;
+      fetch(`${apiBase}/api/v1/checkout-sessions`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey }, body: JSON.stringify({ items, name: form.get('name'), email: form.get('email'), address: form.get('address') }) })
+        .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.detail || 'Could not create the order'); return data; })
+        .then(data => {
+          sessionStorage.setItem(`ks-order:${data.reference}`, data.access_token);
+          if (!data.payment_ready || !data.razorpay_key_id || !data.provider_order_id) {
+            $('#checkout-dialog').close();
+            sessionStorage.removeItem('ks-checkout-idempotency');
+            notify(`Order ${data.reference} saved. Payment is not configured yet.`);
+            checkoutForm.reset();
+            return;
+          }
+          const openCheckout = () => {
+            $('#checkout-dialog').close();
+            const gateway = new window.Razorpay({
+              key: data.razorpay_key_id,
+              amount: data.subtotal_minor,
+              currency: data.currency,
+              name: 'King Stripe',
+              description: 'King Stripe order',
+              order_id: data.provider_order_id,
+              prefill: { name: form.get('name'), email: form.get('email') },
+              handler: async result => {
+                try {
+                  const verified = await fetch(`${apiBase}/api/v1/payments/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Order-Token': data.access_token },
+                    body: JSON.stringify({ order_reference: data.reference, razorpay_order_id: result.razorpay_order_id, razorpay_payment_id: result.razorpay_payment_id, razorpay_signature: result.razorpay_signature })
+                  }).then(async response => { const body = await response.json(); if (!response.ok) throw new Error(body.detail || 'Payment verification failed'); return body; });
+                  if (verified.status === 'paid') {
+                    bag = []; safeWrite('ks-redesign-bag', bag); renderBag(); updateCounts();
+                    sessionStorage.removeItem('ks-checkout-idempotency');
+                    checkoutForm.reset();
+                    notify(`Payment confirmed for order ${data.reference}`);
+                  } else notify(`Order ${data.reference} is awaiting verified payment confirmation`);
+                } catch (error) { notify(error.message); }
+              },
+              modal: { ondismiss: () => notify('Payment was not confirmed. Your bag is still saved.') }
+            });
+            gateway.open();
+          };
+          if (window.Razorpay) openCheckout();
+          else {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = openCheckout;
+            script.onerror = () => notify('Payment checkout could not be loaded. Your bag is still saved.');
+            document.head.append(script);
+          }
+        })
+        .catch(error => {
+          if (error.message.includes('Idempotency key was used with different checkout details')) sessionStorage.removeItem('ks-checkout-idempotency');
+          notify(error.message);
+        })
+        .finally(() => { button.disabled = false; });
+      return;
+    }
     $('#checkout-dialog').close();
     bag = [];
     safeWrite('ks-redesign-bag', bag);
@@ -308,4 +408,5 @@
     if (mobileNav) mobileNav.hidden = true;
     menuButton?.setAttribute('aria-label', 'Open menu');
   }));
+  void loadBackendCatalog();
 })();

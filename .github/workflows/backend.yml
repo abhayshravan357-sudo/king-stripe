@@ -1,0 +1,47 @@
+name: Backend
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: kingstripe_test
+          POSTGRES_USER: kingstripe
+          POSTGRES_PASSWORD: test-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U kingstripe -d kingstripe_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      ENVIRONMENT: test
+      DATABASE_URL: postgresql+psycopg://kingstripe:testpw@localhost:5432/kingstripe_test
+      TEST_DATABASE_URL: postgresql+psycopg://kingstripe:testpw@localhost:5432/kingstripe_test
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - run: pip install -r requirements-browser.txt pip-audit
+      - run: alembic upgrade head
+      - run: python -m app.seed
+      - run: pytest -q
+      - run: python tests/static_qa.py
+      - run: python ../tools/secret_scan.py
+      - run: python -m playwright install --with-deps chromium
+      - run: python tests/browser_checkout.py
+      - run: pip-audit -r requirements.txt
+      - run: docker build -t king-stripe-api .
